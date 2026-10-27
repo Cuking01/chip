@@ -1,0 +1,22 @@
+services:
+  rtl:
+    build:
+      context: ./docker/rtl
+    image: chip-rtl:local
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+
+  openlane:
+    build:
+      context: ./docker/openlane
+      args:
+        OPENLANE_IMAGE: "${OPENLANE_IMAGE:-ghcr.io/efabless/openlane2:2.3.10}"
+    image: chip-openlane:local
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    working_dir: /workspace
+    environment:
+      PDK_ROOT: /workspace/pdks
+    volumes:
+      - .:/workspace

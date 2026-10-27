@@ -1,0 +1,32 @@
+# Per-user and local container state
+.env
+.docker-data/
+.cache/
+
+# Downloaded PDKs and generated tool outputs
+pdks/
+build/
+runs/
+
+# Simulation and synthesis by-products
+*.vvp
+*.vcd
+*.fst
+*.lxt
+*.log
+*.json.bak
+*.blif
+*.aig
+
+# Physical-design by-products (publish milestone artifacts separately)
+*.def
+*.lef
+*.gds
+*.gdsii
+*.spef
+*.sdf
+
+# Editor files
+.vscode/
+.idea/
+__pycache__/
