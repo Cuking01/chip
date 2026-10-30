@@ -1,12 +1,15 @@
 DESIGN ?= hello_rtl
 
-.PHONY: bootstrap images sim synth flow shell-rtl shell-openlane clean clean-design disk
+.PHONY: bootstrap images check-tools sim synth flow shell-rtl shell-openlane clean clean-design disk
 
 bootstrap:
 	./scripts/bootstrap.sh
 
 images:
 	docker compose build rtl openlane
+
+check-tools:
+	./scripts/check_toolchain.sh
 
 sim:
 	./scripts/sim.sh $(DESIGN)
