@@ -23,7 +23,15 @@ module operand_resolver
     output logic rd_ready,
 
     input issue_t issue,
-    input commit_t commit
+    input commit_t commit,
+
+    output logic[COMMIT_SLOT_ADDR_W-1:0] commit_queue_query_rs1,
+    output logic[COMMIT_SLOT_ADDR_W-1:0] commit_queue_query_rs2,
+    output logic[COMMIT_SLOT_ADDR_W-1:0] commit_queue_query_rs3,
+
+    input commit_slot commit_queue_query_rs1_result,
+    input commit_slot commit_queue_query_rs2_result,
+    input commit_slot commit_queue_query_rs3_result
 
 );
 
@@ -33,7 +41,7 @@ module operand_resolver
     regfile rf_inst(
         .clk,
         .rst_n,
-        .rs1_addr,
+        .rs1_addr,                                                                                                                                                  
         .rs2_addr,
         .rs3_addr,
         .rs1_data(rf_rs1_data),
@@ -46,6 +54,20 @@ module operand_resolver
 
     reg                           pending[REG_NUM-1:0];   // 寄存器是否等待被写入
     reg[COMMIT_SLOT_ADDR_W-1:0]   producer[REG_NUM-1:0];  // 被哪个槽写入
+
+    assign commit_queue_query_rs1=producer[rs1_addr];
+    assign commit_queue_query_rs2=producer[rs2_addr];
+    assign commit_queue_query_rs3=producer[rs3_addr];
+
+    assign rs1_data=pending[rs1_addr]?commit_queue_query_rs1_result.res:rf_rs1_data;
+    assign rs2_data=pending[rs2_addr]?commit_queue_query_rs2_result.res:rf_rs2_data;
+    assign rs3_data=pending[rs3_addr]?commit_queue_query_rs3_result.res:rf_rs3_data;
+
+    assign rs1_ready=~pending[rs1_addr]|commit_queue_query_rs1_result.done;
+    assign rs2_ready=~pending[rs2_addr]|commit_queue_query_rs2_result.done;
+    assign rs3_ready=~pending[rs3_addr]|commit_queue_query_rs3_result.done;
+
+    assign rd_ready = (rd_addr == '0) || !pending[rd_addr];
 
     always_ff @(posedge clk) {
         if(!rst_n)
@@ -66,7 +88,7 @@ module operand_resolver
 
             if(issue.valid)
             {
-                pending[issue.rd] <= 1;
+                pending[issue.rd] <= |issue.rd;         //r0不实际记录依赖
                 producer[issue.rd] <= issue.slot_addr;
             }
 

@@ -18,15 +18,23 @@ module commit_queue
     output logic[REG_ADDR_W-1:0] rf_waddr,
     output logic[DW-1:0] rf_wdata,
 
-    input logic[COMMIT_SLOT_ADDR_W-1:0] query_addr,
-    output commit_slot query_result
+    input logic[COMMIT_SLOT_ADDR_W-1:0] rs1_query_addr,
+    input logic[COMMIT_SLOT_ADDR_W-1:0] rs2_query_addr,
+    input logic[COMMIT_SLOT_ADDR_W-1:0] rs3_query_addr,
+
+    output commit_slot rs1_query_result,
+    output commit_slot rs2_query_result,
+    output commit_slot rs3_query_result
 );
 
     commit_slot queue[COMMIT_SLOT_NUM-1:0];
     reg[COMMIT_SLOT_ADDR_W-1:0] head,tail;
     logic[COMMIT_SLOT_ADDR_W-1:0] tail_next,head_next;
 
-    assign query_result = queue[query_addr];
+    assign rs1query_result = queue[rs1_query_addr];
+    assign rs2query_result = queue[rs2_query_addr];
+    assign rs3query_result = queue[rs3_query_addr];
+
     assign alloc_slot_addr = tail;
 
     always_comb {

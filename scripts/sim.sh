@@ -10,7 +10,7 @@ out="$root/build/$design"
 [[ -d $rtl && -d $tb ]] || { echo "Unknown design: $design" >&2; exit 2; }
 mkdir -p "$out"
 
-mapfile -t sources < <(find "$rtl" "$tb" -maxdepth 1 -type f \( -name '*.v' -o -name '*.sv' \) ! -path "$rtl/common.sv" | sort)
+mapfile -t sources < <(find "$rtl" "$tb" -type f \( -name '*.v' -o -name '*.sv' \) ! -path "$rtl/common.sv" | sort)
 
 # Read the shared package before modules and testbenches that use its types.
 if [[ -f "$rtl/common.sv" ]]; then

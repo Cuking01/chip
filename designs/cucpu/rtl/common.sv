@@ -7,6 +7,7 @@ package cucpu_common;
     localparam integer REG_NUM = 32;        // 寄存器数
     localparam integer REG_ADDR_W = 5;      // 寄存器号宽度
     localparam integer ALU_MODIFIER_W = 7;  // ALU 指令修饰符位宽
+    localparam integer ALU_MOD_SIGNED_BIT = 0; // 比较及右移：0 为无符号，1 为有符号。
     localparam integer COMMIT_SLOT_NUM = 8;    // commit队列大小，负责 forwarding 和写回，必须是2的幂次，实际可用大小需要减1，不能全部用满
     localparam integer COMMIT_SLOT_ADDR_W = 3; // commit队列槽地址宽度
 

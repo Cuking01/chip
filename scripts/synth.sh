@@ -10,7 +10,7 @@ top_file="$rtl/$design.sv"
 [[ -f $top_file ]] || { echo "Expected top-level file: $top_file" >&2; exit 2; }
 mkdir -p "$out"
 
-mapfile -t sources < <(find "$rtl" -maxdepth 1 -type f -name '*.sv' ! -name 'common.sv' | sort)
+mapfile -t sources < <(find "$rtl" -type f -name '*.sv' ! -path "$rtl/common.sv" | sort)
 if [[ -f "$rtl/common.sv" ]]; then
   sources=("$rtl/common.sv" "${sources[@]}")
 fi
