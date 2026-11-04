@@ -1,6 +1,6 @@
 DESIGN ?= hello_rtl
 
-.PHONY: bootstrap images check-tools check-alu check-cucpu sim synth flow shell-rtl shell-openlane clean clean-design disk
+.PHONY: bootstrap images check-tools check-alu check-imul check-cucpu sim synth flow shell-rtl shell-openlane clean clean-design disk
 
 bootstrap:
 	./scripts/bootstrap.sh
@@ -14,8 +14,12 @@ check-tools:
 check-alu:
 	./scripts/check_alu.sh
 
+check-imul:
+	./scripts/check_imul.sh
+
 check-cucpu:
 	./scripts/check_cucpu.sh
+	./scripts/check_cucpu.sh --small-queue
 
 sim:
 	./scripts/sim.sh $(DESIGN)

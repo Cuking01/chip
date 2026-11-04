@@ -35,6 +35,7 @@ module executor_alu
     complete_t iadd_complete;
     complete_t shl_complete, shr_complete;
     logic shl_valid, shr_valid;
+    logic imul_valid, imul_high_half;
 
     assign exec_ready='1;
     assign compare_eq = (buf_rs1 == buf_rs2);
@@ -110,6 +111,23 @@ module executor_alu
         .complete(shr_complete)
     );
 
+    assign imul_valid = rst_n && buf_valid
+        && ((buf_op_code == ALU_OP_IMUL_LO) || (buf_op_code == ALU_OP_IMUL_HI));
+    assign imul_high_half = buf_op_code == ALU_OP_IMUL_HI;
+    // executor 的输入寄存器加 imul 内两级寄存器，总执行延迟为三级。
+    // 目前乘法仅实现无符号模式，修饰位尚不用于选择有符号乘法。
+    imul imul_inst(
+        .clk,
+        .rst_n,
+        .valid0(imul_valid),
+        .rs1(buf_rs1),
+        .rs2(buf_rs2),
+        .signed_mode(1'b0),
+        .high_half(imul_high_half),
+        .slot_addr0(buf_slot_addr),
+        .complete(latancy3_complete)
+    );
+
     always_comb {
         latancy1_complete = iadd_complete;
         case (alu_op_t'(buf_op_code))
@@ -140,7 +158,6 @@ module executor_alu
         endcase
     }
     assign latancy2_complete = '0;
-    assign latancy3_complete = '0;
     assign latancy4_complete = '0;
     
     

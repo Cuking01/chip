@@ -152,7 +152,7 @@ module executor_alu_tb;
         end
 
         // An operation handled elsewhere must not complete on the adder lane.
-        @(negedge clk); op_code = ALU_OP_IMUL_LO;
+        @(negedge clk); op_code = ALU_OP_IMAD_LO;
         @(posedge clk); #1;
         if (c1.valid !== 0) $fatal(1, "opcode gating");
         @(negedge clk); exec_valid = 0;

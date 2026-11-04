@@ -13,6 +13,7 @@ if ! "${compose[@]}" rtl python3 /workspace/scripts/prepare_sv.py \
   --iverilog-output /workspace/build/alu-check/check.vvp \
   /workspace/designs/cucpu/rtl/common.sv \
   /workspace/designs/cucpu/rtl/alu/iadd.sv \
+  /workspace/designs/cucpu/rtl/alu/imul.sv \
   /workspace/designs/cucpu/rtl/alu/shl.sv \
   /workspace/designs/cucpu/rtl/alu/shr.sv \
   /workspace/designs/cucpu/rtl/executor_alu.sv \
