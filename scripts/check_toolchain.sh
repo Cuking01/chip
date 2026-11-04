@@ -37,6 +37,7 @@ fi
 echo "PASS: slang synthesis and OpenLane Verilog reader"
 
 "$root/scripts/check_alu.sh"
+"$root/scripts/check_cucpu.sh"
 
 "$root/scripts/sim.sh" hello_rtl
 if ! "$root/scripts/synth.sh" hello_rtl > "$out/hello-synthesis.log" 2>&1; then

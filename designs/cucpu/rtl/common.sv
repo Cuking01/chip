@@ -33,10 +33,9 @@ package cucpu_common;
 
     // 正式提交时，写入 RF 并通知依赖管理逻辑解除对应依赖。
     typedef struct packed {
-        logic valid;
-        logic [REG_ADDR_W-1:0] rd;
-        logic [COMMIT_SLOT_ADDR_W-1:0] slot_addr;
-        logic [DW-1:0] result;
+        logic valid; // 同时作为 RF 写使能和解除依赖使能；复位期间为 0。
+        logic [REG_ADDR_W-1:0] rd; // 写回及解除依赖的目标寄存器。
+        logic [DW-1:0] result; // 写回 RF 的数据。
     } commit_t;
 
     typedef enum logic [OP_GROUP_W-1:0] {

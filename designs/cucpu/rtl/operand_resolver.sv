@@ -83,7 +83,6 @@ module operand_resolver
             if(commit.valid)
             {
                 pending[commit.rd] <= 0;
-                producer[commit.rd] <= commit.slot_addr;
             }
 
             if(issue.valid)

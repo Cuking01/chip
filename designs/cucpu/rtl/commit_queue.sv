@@ -12,11 +12,10 @@ module commit_queue
     output logic alloc_ready,
     output logic[COMMIT_SLOT_ADDR_W-1:0] alloc_slot_addr,
 
-    input complete_t complete_alu,
-
-    output logic rf_we,
-    output logic[REG_ADDR_W-1:0] rf_waddr,
-    output logic[DW-1:0] rf_wdata,
+    input complete_t complete_alu_latancy1,
+    input complete_t complete_alu_latancy2,
+    input complete_t complete_alu_latancy3,
+    input complete_t complete_alu_latancy4,
 
     input logic[COMMIT_SLOT_ADDR_W-1:0] rs1_query_addr,
     input logic[COMMIT_SLOT_ADDR_W-1:0] rs2_query_addr,
@@ -24,16 +23,18 @@ module commit_queue
 
     output commit_slot rs1_query_result,
     output commit_slot rs2_query_result,
-    output commit_slot rs3_query_result
+    output commit_slot rs3_query_result,
+
+    output commit_t commit
 );
 
     commit_slot queue[COMMIT_SLOT_NUM-1:0];
     reg[COMMIT_SLOT_ADDR_W-1:0] head,tail;
     logic[COMMIT_SLOT_ADDR_W-1:0] tail_next,head_next;
 
-    assign rs1query_result = queue[rs1_query_addr];
-    assign rs2query_result = queue[rs2_query_addr];
-    assign rs3query_result = queue[rs3_query_addr];
+    assign rs1_query_result = queue[rs1_query_addr];
+    assign rs2_query_result = queue[rs2_query_addr];
+    assign rs3_query_result = queue[rs3_query_addr];
 
     assign alloc_slot_addr = tail;
 
@@ -41,16 +42,16 @@ module commit_queue
         if(head != tail && queue[head].done)
         {
             head_next = (head+1)&(COMMIT_SLOT_NUM-1);
-            rf_we = 1;
-            rf_waddr = queue[head].rd;
-            rf_wdata = queue[head].res;
+            commit.valid = rst_n;
+            commit.rd = queue[head].rd;
+            commit.result = queue[head].res;
         }
         else
         {
             head_next = head;
-            rf_we = 0;
-            rf_waddr = 0;
-            rf_wdata = 0;
+            commit.valid = '0;
+            commit.rd = '0;
+            commit.result = '0;
         }
     }
 
@@ -74,10 +75,28 @@ module commit_queue
                 tail_next = tail;
             }
 
-            if(complete_alu.valid)
+            if(complete_alu_latancy1.valid)
             {
-                queue[complete_alu.slot_addr].done <= 1'b1;
-                queue[complete_alu.slot_addr].res <= complete_alu.result;
+                queue[complete_alu_latancy1.slot_addr].done <= 1'b1;
+                queue[complete_alu_latancy1.slot_addr].res <= complete_alu_latancy1.result;
+            }
+
+            if(complete_alu_latancy2.valid)
+            {
+                queue[complete_alu_latancy2.slot_addr].done <= 1'b1;
+                queue[complete_alu_latancy2.slot_addr].res <= complete_alu_latancy2.result;
+            }
+
+            if(complete_alu_latancy3.valid)
+            {
+                queue[complete_alu_latancy3.slot_addr].done <= 1'b1;
+                queue[complete_alu_latancy3.slot_addr].res <= complete_alu_latancy3.result;
+            }
+
+            if(complete_alu_latancy4.valid)
+            {
+                queue[complete_alu_latancy4.slot_addr].done <= 1'b1;
+                queue[complete_alu_latancy4.slot_addr].res <= complete_alu_latancy4.result;
             }
 
             head <= head_next;

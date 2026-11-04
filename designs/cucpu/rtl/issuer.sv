@@ -70,7 +70,7 @@ module issuer
                     3: imm = {alu_param.rs3,alu_param.imm};
                 endcase
 
-
+                exec_modifiers = alu_param.modifiers;
             }
             default: {
                 rd_addr = 0;
@@ -81,6 +81,8 @@ module issuer
                 rs1_imm = 0;
                 rs2_imm = 0;
                 rs3_imm = 0;
+
+                exec_modifiers = '0;
             }
         endcase
 
@@ -101,6 +103,8 @@ module issuer
     assign rs2 = rs2_imm ? imm : rs2_data;
     assign rs3 = rs3_imm ? imm : rs3_data;
     assign exec_op_code = buf_ins.op_code;
+    assign exec_slot_addr = alloc_slot_addr;
+
 
     assign ins_ready=rst_n&&(!buf_valid||(exec_valid&&exec_ready));
 
